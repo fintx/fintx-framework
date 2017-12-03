@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.fintx.sequence.dao.mapper.SequenceMapper">
+	<resultMap id="BaseResultMap" type="org.fintx.sequence.entity.Sequence">
+		<id column="name" property="name" jdbcType="VARCHAR" />
+		<result column="current_value" property="currentValue" jdbcType="INTEGER" />
+		<result column="increment" property="increment" jdbcType="INTEGER" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		name, current_value, increment
+	</sql>
+	<!-- 按主键查询 -->
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String">
+		select
+		<include refid="Base_Column_List" />
+		from t_sequence
+		where name = #{name,jdbcType=VARCHAR}
+	</select>
+	<!-- 按主键删除 -->
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from t_sequence
+		where name = #{name,jdbcType=VARCHAR}
+	</delete>
+	<!-- 插入一个sequence -->
+	<insert id="insert" parameterType="org.fintx.sequence.entity.Sequence">
+		insert into t_sequence (name, current_value, increment
+		)
+		values (#{name,jdbcType=VARCHAR}, #{currentValue,jdbcType=INTEGER}, #{increment,jdbcType=INTEGER}
+		)
+	</insert>
+	<!-- 插入一个sequence -->
+	<insert id="insertSelective" parameterType="org.fintx.sequence.entity.Sequence">
+		insert into t_sequence
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="name != null">
+				name,
+			</if>
+			<if test="currentValue != null">
+				current_value,
+			</if>
+			<if test="increment != null">
+				increment,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="name != null">
+				#{name,jdbcType=VARCHAR},
+			</if>
+			<if test="currentValue != null">
+				#{currentValue,jdbcType=INTEGER},
+			</if>
+			<if test="increment != null">
+				#{increment,jdbcType=INTEGER},
+			</if>
+		</trim>
+	</insert>
+	<!-- 按主键更新序列表 -->
+	<update id="updateByPrimaryKeySelective" parameterType="org.fintx.sequence.entity.Sequence">
+		update t_sequence
+		<set>
+			<if test="currentValue != null">
+				current_value = #{currentValue,jdbcType=INTEGER},
+			</if>
+			<if test="increment != null">
+				increment = #{increment,jdbcType=INTEGER},
+			</if>
+		</set>
+		where name = #{name,jdbcType=VARCHAR}
+	</update>
+	<!-- 按主键更新sequence表 -->
+	<update id="updateByPrimaryKey" parameterType="org.fintx.sequence.entity.Sequence">
+		update t_sequence
+		set current_value = #{currentValue,jdbcType=INTEGER},
+		increment = #{increment,jdbcType=INTEGER}
+		where name = #{name,jdbcType=VARCHAR}
+	</update>
+	<!-- 按照sequence的名称查询下一个顺序号 -->
+	<select id="selectNextValueByName" resultType="java.lang.String" parameterType="java.lang.String">
+		SELECT seq_nextval(#{name});
+	</select>
+
+</mapper>
